@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	size = 1;
+	int size = 1;
 	while (size > 0) {
 		infos = readline(&inbin, intxt, logintype);
 		if (size > 0) { 
@@ -962,7 +962,7 @@ void mark()
 
 struct info *readline(ifstream *fbin, FILE *ftxt, int filetype)
 {
-
+	size_t size;
 	struct info *infos_loc = (struct info *) malloc(sizeof(struct info));
 
 	if (filetype == 0) {
@@ -1310,7 +1310,7 @@ void elabsplit(int flagbit, int flagjit, int flagdel, int flagpkt)
 				PRINTD(1,"Prima di leggere le info dal file %s con puntantore %p\n",
 					memFile[i].FileName, inputfilec);
 
-				size = fread(infos, sizeof(struct info), 1, inputfilec); 
+				size_t size = fread(infos, sizeof(struct info), 1, inputfilec); 
 				PRINTD(1,"Info lette dal file %s\n", memFile[i].FileName);
 				if (size == 0) {
 					if (flagbit)

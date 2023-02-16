@@ -228,7 +228,7 @@ int modeManager(int argc, char *argv[])
 		PRINTD(1,"modeManager: Notify ITGManager about the start of the generation %d, \n",size_s);
 
 		CREATE_THREAD(&parserParams[flowCount], flowParser, NULL, h_flowParser[flowCount], true);
-		if (h_flowParser[flowCount] < 0) {
+		if ((long int) (void *) &h_flowParser[flowCount] < 0) {
 			cerr << "Cannot create a process to handle flow " << flowCount +
 			    1 << endl;
 		}
@@ -290,7 +290,7 @@ int modeScript(int argc, char *argv[])
 			
 			parserParams[flowCount].flowId = flowCount + 1;
 			CREATE_THREAD(&parserParams[flowCount], flowParser, NULL, h_flowParser[flowCount], false);
-			if (h_flowParser[flowCount] < 0) {
+			if ((long int) (void *) &h_flowParser[flowCount] < 0) {
 				perror("ITGSend Main: ");
 				cerr << "Cannot create a process to handle flow " << flowCount + 1 << endl;
 			}
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	
+	pthread_mutex_t mutex;
 	MUTEX_THREAD_INIT(mutex);
 	MUTEX_THREAD_INIT(mutexLog);
 	MUTEX_THREAD_INIT(mutexLogRem);
@@ -1257,7 +1257,7 @@ void *flowParser(void *param)
 				argc -= 3;
 				break;
 			case 'N':
-				if ((argc < 3) || (argv[h + 2] <= 0))	
+				if ((argc < 3) || (atoi(argv[h + 2]) <= 0))	
 					ReportErrorAndExit("Protocol Parser",
 					    "Invalid pkts per sec", programName, id);
 				flows[id].IntArrivDistro = pdNormal;
@@ -1392,7 +1392,7 @@ void *flowParser(void *param)
 				argc -= 3;
 				break;
 			case 'n':
-				if ((argc < 3) || (argv[h + 2] <= 0))	
+				if ((argc < 3) || (atoi(argv[h + 2]) <= 0))	
 					ReportErrorAndExit("Protocol Parser", "Invalid pkt size",
 					    programName, id);
 				delete flows[id].PktSize;
@@ -2262,6 +2262,7 @@ void *signalManager(void *id)
 
 int isChannelClosable(int id)
 {
+	pthread_mutex_t mutex;
 	MUTEX_THREAD_LOCK(mutex);
 	signalChannels[id].flows--;
 	if (signalChannels[id].flows == 0) {
@@ -2296,7 +2297,7 @@ int identifySignalManager(int flowId, int *chanId, struct addrinfo * &DestHost,b
 	bool checkChanID = false;
 
 	PRINTD(1,"identifySignalManager: flowId=%d\n",flowId);
-
+	pthread_mutex_t mutex;
 	MUTEX_THREAD_LOCK(mutex);
 
 	checkChanID = checkDestHostIP(chanId, DestHost);
