@@ -342,7 +342,6 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	pthread_mutex_t mutex;
 	MUTEX_THREAD_INIT(mutex);
 	MUTEX_THREAD_INIT(mutexLog);
 	MUTEX_THREAD_INIT(mutexLogRem);
@@ -2262,7 +2261,6 @@ void *signalManager(void *id)
 
 int isChannelClosable(int id)
 {
-	pthread_mutex_t mutex;
 	MUTEX_THREAD_LOCK(mutex);
 	signalChannels[id].flows--;
 	if (signalChannels[id].flows == 0) {
@@ -2297,7 +2295,6 @@ int identifySignalManager(int flowId, int *chanId, struct addrinfo * &DestHost,b
 	bool checkChanID = false;
 
 	PRINTD(1,"identifySignalManager: flowId=%d\n",flowId);
-	pthread_mutex_t mutex;
 	MUTEX_THREAD_LOCK(mutex);
 
 	checkChanID = checkDestHostIP(chanId, DestHost);

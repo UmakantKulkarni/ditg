@@ -50,9 +50,11 @@ PREFIX = /usr/local
 OS := $(shell uname)
 ifeq ($(OS),Linux)
 	OSFLAGS := -DUNIX
+	CXXOPT += -DNOIPV6
 endif
 ifeq ($(OS),FreeBSD)
 	OSFLAGS := -DUNIX -DBSD
+	CXXOPT += -DNOIPV6
 endif
 ifeq ($(OS),Darwin)
 	OSFLAGS := -DUNIX -DBSD -DOSX
