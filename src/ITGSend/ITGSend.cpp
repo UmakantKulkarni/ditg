@@ -132,14 +132,14 @@ sctpSession sctpSessions[MAX_NUM_THREAD];
 pthread_mutex_t mutexSctp = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-pthread_mutex_t mutex;
+pthread_mutex_t mutexuk;
 pthread_mutex_t mutexLog;
 pthread_mutex_t mutexErrLog;
 pthread_mutex_t mutexLogRem;
 pthread_mutex_t mutexBufferPayload;	
 #endif
 #ifdef WIN32
-HANDLE mutex;
+HANDLE mutexuk;
 HANDLE mutexLog;
 HANDLE mutexLogRem;
 HANDLE mutexBufferPayload; 	
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	MUTEX_THREAD_INIT(mutex);
+	MUTEX_THREAD_INIT(mutexuk);
 	MUTEX_THREAD_INIT(mutexLog);
 	MUTEX_THREAD_INIT(mutexLogRem);
 	MUTEX_THREAD_INIT(mutexBufferPayload);	
@@ -2261,7 +2261,7 @@ void *signalManager(void *id)
 
 int isChannelClosable(int id)
 {
-	MUTEX_THREAD_LOCK(mutex);
+	MUTEX_THREAD_LOCK(mutexuk);
 	signalChannels[id].flows--;
 	if (signalChannels[id].flows == 0) {
 		sendRelease(signalChannels[id].socket);
@@ -2275,11 +2275,11 @@ int isChannelClosable(int id)
 
 		closePipe(signalChannels[id].pipe);
 
-  		MUTEX_THREAD_UNLOCK(mutex);
+  		MUTEX_THREAD_UNLOCK(mutexuk);
 		PRINTD(1, "isChannelClosable: closing signaling channel\n");
 		return(1);
 	}
-	MUTEX_THREAD_UNLOCK(mutex);
+	MUTEX_THREAD_UNLOCK(mutexuk);
 	return(0);
 }
 
@@ -2295,7 +2295,7 @@ int identifySignalManager(int flowId, int *chanId, struct addrinfo * &DestHost,b
 	bool checkChanID = false;
 
 	PRINTD(1,"identifySignalManager: flowId=%d\n",flowId);
-	MUTEX_THREAD_LOCK(mutex);
+	MUTEX_THREAD_LOCK(mutexuk);
 
 	checkChanID = checkDestHostIP(chanId, DestHost);
 
@@ -2376,7 +2376,7 @@ int identifySignalManager(int flowId, int *chanId, struct addrinfo * &DestHost,b
 			
 			signalChanCount++;
 		}
-		MUTEX_THREAD_UNLOCK(mutex);
+		MUTEX_THREAD_UNLOCK(mutexuk);
 		return(1);
 
 	} else {
@@ -2402,7 +2402,7 @@ int identifySignalManager(int flowId, int *chanId, struct addrinfo * &DestHost,b
 		}
 		
 
-		MUTEX_THREAD_UNLOCK(mutex);
+		MUTEX_THREAD_UNLOCK(mutexuk);
 		return(0);
 	}
 }
